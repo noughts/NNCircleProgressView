@@ -13,10 +13,16 @@
 	CGFloat _progress;
 	UIColor* _color;
 	CGFloat _intercept;// 円弧表示の切片
+	CGFloat _lineWidth;
+	
 }
 
 -(void)awakeFromNib{
 	[super awakeFromNib];
+	
+	if( _lineWidth == 0 ){
+		_lineWidth = 1;
+	}
 	
 	_intercept = 0.33;
 	int radius = self.frame.size.width / 2;
@@ -30,12 +36,17 @@
 	
     _arc.fillColor = [UIColor clearColor].CGColor;
     _arc.strokeColor = _color.CGColor;
-    _arc.lineWidth = 2;
+    _arc.lineWidth = _lineWidth;
 	_arc.strokeEnd = _intercept;
 	
     [self.layer addSublayer:_arc];
 }
 
+
+-(void)setLineWidth:(CGFloat)lineWidth{
+	_arc.lineWidth = lineWidth;
+	_lineWidth = lineWidth;
+}
 
 -(void)setColor:(UIColor*)color{
 	_color = color;
