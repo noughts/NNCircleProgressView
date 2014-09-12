@@ -33,6 +33,11 @@
     [self.layer addSublayer:_arc];
 }
 
+
+-(void)setColor:(UIColor*)color{
+	_arc.strokeColor = color.CGColor;
+}
+
 -(void)start{
 	CABasicAnimation* rotationAnimation;
     rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];

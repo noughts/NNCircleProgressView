@@ -13,5 +13,6 @@
 -(void)start;
 -(void)stop;
 -(void)setProgress:(CGFloat)progress;
+-(void)setColor:(UIColor*)color;
 
 @end
