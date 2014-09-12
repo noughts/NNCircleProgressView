@@ -33,7 +33,7 @@
     _arc.fillColor = [UIColor clearColor].CGColor;
     _arc.strokeColor = _color.CGColor;
     _arc.lineWidth = 2;
-	_arc.strokeEnd = _intercept;
+	_arc.strokeEnd = 0;
 	
     [self.layer addSublayer:_arc];
 }
@@ -68,17 +68,6 @@
 
 
 -(void)setProgress:(CGFloat)progress{
-	CABasicAnimation *drawAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-    drawAnimation.duration = 0.25;
-	// 進捗が0の時にも線が見えるようにする
-	CGFloat from = (1-_intercept) * _progress;
-	CGFloat to = (1-_intercept) * progress;
-    drawAnimation.fromValue = [NSNumber numberWithFloat:_intercept+from];
-    drawAnimation.toValue   = [NSNumber numberWithFloat:_intercept+to];
-	drawAnimation.removedOnCompletion = NO;
-	drawAnimation.fillMode = kCAFillModeForwards;
-    drawAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    [_arc addAnimation:drawAnimation forKey:@"drawCircleAnimation"];
 	_progress = progress;
 }
 
@@ -100,6 +89,7 @@
 
 -(void)stop{
 	[self.layer removeAllAnimations];
+	[_timer invalidate];
 }
 
 
