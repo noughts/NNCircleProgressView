@@ -11,11 +11,14 @@
 @implementation NNCircleProgressView{
 	CAShapeLayer* _arc;
 	CGFloat _progress;
+	UIColor* _color;
+	CGFloat _intercept;// 円弧表示の切片
 }
 
 -(void)awakeFromNib{
 	[super awakeFromNib];
 	
+	_intercept = 0.33;
 	int radius = self.frame.size.width / 2;
 	
     _arc = [CAShapeLayer layer];
@@ -26,16 +29,17 @@
 	_arc.position = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
 	
     _arc.fillColor = [UIColor clearColor].CGColor;
-    _arc.strokeColor = [UIColor purpleColor].CGColor;
+    _arc.strokeColor = _color.CGColor;
     _arc.lineWidth = 2;
-	_arc.strokeEnd = 0.33;
+	_arc.strokeEnd = _intercept;
 	
     [self.layer addSublayer:_arc];
 }
 
 
 -(void)setColor:(UIColor*)color{
-	_arc.strokeColor = color.CGColor;
+	_color = color;
+	_arc.strokeColor = _color.CGColor;
 }
 
 -(void)start{
@@ -53,10 +57,10 @@
 	CABasicAnimation *drawAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
     drawAnimation.duration = 0.25;
 	// 進捗が0の時にも線が見えるようにする
-	CGFloat from = (100-33)/100.0 * _progress;
-	CGFloat to = (100-33)/100.0 * progress;
-    drawAnimation.fromValue = [NSNumber numberWithFloat:0.33+from];
-    drawAnimation.toValue   = [NSNumber numberWithFloat:0.33+to];
+	CGFloat from = (1-_intercept) * _progress;
+	CGFloat to = (1-_intercept) * progress;
+    drawAnimation.fromValue = [NSNumber numberWithFloat:_intercept+from];
+    drawAnimation.toValue   = [NSNumber numberWithFloat:_intercept+to];
 	drawAnimation.removedOnCompletion = NO;
 	drawAnimation.fillMode = kCAFillModeForwards;
     drawAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
