@@ -22,6 +22,7 @@
 		4D19B50F19C2E5CE0073BF20 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4D19B50D19C2E5CE0073BF20 /* InfoPlist.strings */; };
 		4D19B51119C2E5CE0073BF20 /* NNCircleProgressViewDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D19B51019C2E5CE0073BF20 /* NNCircleProgressViewDemoTests.m */; };
 		4D19B51D19C2E5FF0073BF20 /* NNCircleProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D19B51C19C2E5FF0073BF20 /* NNCircleProgressView.m */; };
+		4D19B52319C3D4B30073BF20 /* NNCircleProgressArcLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D19B52219C3D4B30073BF20 /* NNCircleProgressArcLayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,8 @@
 		4D19B51019C2E5CE0073BF20 /* NNCircleProgressViewDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NNCircleProgressViewDemoTests.m; sourceTree = "<group>"; };
 		4D19B51B19C2E5FF0073BF20 /* NNCircleProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NNCircleProgressView.h; sourceTree = "<group>"; };
 		4D19B51C19C2E5FF0073BF20 /* NNCircleProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NNCircleProgressView.m; sourceTree = "<group>"; };
+		4D19B52119C3D4B30073BF20 /* NNCircleProgressArcLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NNCircleProgressArcLayer.h; sourceTree = "<group>"; };
+		4D19B52219C3D4B30073BF20 /* NNCircleProgressArcLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NNCircleProgressArcLayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +164,8 @@
 			children = (
 				4D19B51B19C2E5FF0073BF20 /* NNCircleProgressView.h */,
 				4D19B51C19C2E5FF0073BF20 /* NNCircleProgressView.m */,
+				4D19B52119C3D4B30073BF20 /* NNCircleProgressArcLayer.h */,
+				4D19B52219C3D4B30073BF20 /* NNCircleProgressArcLayer.m */,
 			);
 			path = NNCircleProgressView;
 			sourceTree = "<group>";
@@ -263,6 +268,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D19B4FC19C2E5CE0073BF20 /* ViewController.m in Sources */,
+				4D19B52319C3D4B30073BF20 /* NNCircleProgressArcLayer.m in Sources */,
 				4D19B4F619C2E5CE0073BF20 /* AppDelegate.m in Sources */,
 				4D19B4F219C2E5CE0073BF20 /* main.m in Sources */,
 				4D19B51D19C2E5FF0073BF20 /* NNCircleProgressView.m in Sources */,

@@ -7,6 +7,7 @@
 //
 
 #import "NNCircleProgressView.h"
+#import "NNCircleProgressArcLayer.h"
 
 @implementation NNCircleProgressView{
 	CAShapeLayer* _arc;
@@ -14,11 +15,18 @@
 	UIColor* _color;
 	CGFloat _intercept;// 円弧表示の切片
 	CGFloat _lineWidth;
-	
+	NSTimer* _timer;
+	NSInteger _counter;
+}
+
++(Class)layerClass{
+	return [NNCircleProgressArcLayer class];
 }
 
 -(void)awakeFromNib{
 	[super awakeFromNib];
+	
+	_arc = (CAShapeLayer*)self.layer;
 	
 	if( _lineWidth == 0 ){
 		_lineWidth = 1;
@@ -27,19 +35,18 @@
 	_intercept = 0.33;
 	int radius = self.frame.size.width / 2;
 	
-    _arc = [CAShapeLayer layer];
-	
 	CGFloat rad1 = 0 * M_PI / 180;
-	CGFloat rad2 = 360 * M_PI / 180;
-    _arc.path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(0, 0) radius:radius startAngle:rad1 endAngle:rad2 clockwise:YES].CGPath;
-	_arc.position = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
+	CGFloat rad2 = 360*999 * M_PI / 180;
+	
+	CGPoint center = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
+    _arc.path = [UIBezierPath bezierPathWithArcCenter:center radius:radius startAngle:rad1 endAngle:rad2 clockwise:YES].CGPath;
+	
 	
     _arc.fillColor = [UIColor clearColor].CGColor;
     _arc.strokeColor = _color.CGColor;
     _arc.lineWidth = _lineWidth;
-	_arc.strokeEnd = _intercept;
+	_arc.strokeEnd = 0;
 	
-    [self.layer addSublayer:_arc];
 }
 
 
@@ -54,6 +61,9 @@
 }
 
 -(void)start{
+	_timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(hoge) userInfo:nil repeats:YES];
+	
+	return;
 	CABasicAnimation* rotationAnimation;
     rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
     rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI];
@@ -61,6 +71,26 @@
     rotationAnimation.cumulative = YES;
     rotationAnimation.repeatCount = HUGE_VALF;
     [self.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
+}
+
+-(void)hoge{
+	CABasicAnimation *drawAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+    drawAnimation.duration = 0.25;
+//	drawAnimation.fromValue = @(0);
+    drawAnimation.toValue = @([self strokeValueFromAngle:_counter*45]);
+	NSLog( @"%@", drawAnimation.toValue );
+	drawAnimation.removedOnCompletion = NO;
+	drawAnimation.fillMode = kCAFillModeForwards;
+    drawAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    [_arc addAnimation:drawAnimation forKey:@"drawCircleAnimation"];
+	
+	_counter++;
+}
+
+
+-(CGFloat)strokeValueFromAngle:(NSInteger)angle{
+	NSInteger maxAngle = 360 * 999;
+	return (CGFloat)angle / (CGFloat)maxAngle;
 }
 
 
