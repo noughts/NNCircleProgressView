@@ -16,7 +16,6 @@
 	CGFloat _intercept;// 円弧表示の切片
 	CGFloat _lineWidth;
 	NSTimer* _timer;
-	NSInteger _counter;
 	NSInteger _startAngle;
 	NSInteger _endAngle;
 	BOOL _beat;
@@ -82,15 +81,22 @@
 	CABasicAnimation *anim1 = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
 	CABasicAnimation *anim2 = [CABasicAnimation animationWithKeyPath:@"strokeStart"];
 	
+	CGFloat progress = 0.25;
+	NSInteger posi = 10;
+	NSInteger nega = posi+100;
+	if( nega+posi > 360 ){
+		nega = 360 - posi;
+	}
+	
 	anim1.fromValue = @([self strokeValueFromAngle:_endAngle]);
-	anim2.fromValue = @([self strokeValueFromAngle:_startAngle-20]);
+	anim2.fromValue = @([self strokeValueFromAngle:_startAngle-posi]);
 	if( _beat ){
-		_endAngle += 270;
+		_endAngle += nega;
 	} else {
-		_startAngle += 270;
+		_startAngle += nega;
 	}
 	anim1.toValue = @([self strokeValueFromAngle:_endAngle]);
-	anim2.toValue = @([self strokeValueFromAngle:_startAngle-20]);
+	anim2.toValue = @([self strokeValueFromAngle:_startAngle-posi]);
 	
 	CAAnimationGroup* group = [[CAAnimationGroup alloc] init];
 	group.duration = 0.33;
@@ -99,8 +105,6 @@
 	group.fillMode = kCAFillModeForwards;
 	group.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
 	[_arc addAnimation:group forKey:@"hge"];
-	
-	_counter++;
 }
 
 
