@@ -17,6 +17,9 @@
 	CGFloat _lineWidth;
 	NSTimer* _timer;
 	NSInteger _counter;
+	NSInteger _startAngle;
+	NSInteger _endAngle;
+	BOOL _beat;
 }
 
 +(Class)layerClass{
@@ -45,6 +48,7 @@
     _arc.fillColor = [UIColor clearColor].CGColor;
     _arc.strokeColor = _color.CGColor;
     _arc.lineWidth = _lineWidth;
+	_arc.strokeStart = 0;
 	_arc.strokeEnd = 0;
 	
 }
@@ -74,15 +78,37 @@
 }
 
 -(void)hoge{
-	CABasicAnimation *drawAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-    drawAnimation.duration = 0.25;
-//	drawAnimation.fromValue = @(0);
-    drawAnimation.toValue = @([self strokeValueFromAngle:_counter*45]);
-	NSLog( @"%@", drawAnimation.toValue );
-	drawAnimation.removedOnCompletion = NO;
-	drawAnimation.fillMode = kCAFillModeForwards;
-    drawAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    [_arc addAnimation:drawAnimation forKey:@"drawCircleAnimation"];
+	_beat = !_beat;
+	
+	CABasicAnimation *anim1 = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+	anim1.duration = 0.25;
+	anim1.removedOnCompletion = NO;
+	anim1.fillMode = kCAFillModeForwards;
+	anim1.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+	
+	CABasicAnimation *anim2 = [CABasicAnimation animationWithKeyPath:@"strokeStart"];
+	anim2.duration = 0.25;
+	anim2.removedOnCompletion = NO;
+	anim2.fillMode = kCAFillModeForwards;
+	anim2.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+	
+	anim1.fromValue = @([self strokeValueFromAngle:_endAngle]);
+	anim2.fromValue = @([self strokeValueFromAngle:_startAngle]);
+	if( _beat ){
+		_endAngle += 90;
+	} else {
+		_startAngle += 90;
+	}
+	anim1.toValue = @([self strokeValueFromAngle:_endAngle]);
+	anim2.toValue = @([self strokeValueFromAngle:_startAngle-10]);
+	
+	CAAnimationGroup* group = [[CAAnimationGroup alloc] init];
+	group.duration = 0.25;
+	group.animations = @[anim1, anim2];
+	group.removedOnCompletion = NO;
+	group.fillMode = kCAFillModeForwards;
+	group.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+	[_arc addAnimation:group forKey:@"hge"];
 	
 	_counter++;
 }
