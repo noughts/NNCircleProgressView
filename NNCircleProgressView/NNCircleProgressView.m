@@ -65,13 +65,12 @@
 }
 
 -(void)start{
-	_timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(hoge) userInfo:nil repeats:YES];
+	_timer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(hoge) userInfo:nil repeats:YES];
 	
-	return;
 	CABasicAnimation* rotationAnimation;
     rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
     rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI];
-    rotationAnimation.duration = 0.3;
+    rotationAnimation.duration = 0.5;
     rotationAnimation.cumulative = YES;
     rotationAnimation.repeatCount = HUGE_VALF;
     [self.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
@@ -81,29 +80,20 @@
 	_beat = !_beat;
 	
 	CABasicAnimation *anim1 = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-	anim1.duration = 0.25;
-	anim1.removedOnCompletion = NO;
-	anim1.fillMode = kCAFillModeForwards;
-	anim1.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-	
 	CABasicAnimation *anim2 = [CABasicAnimation animationWithKeyPath:@"strokeStart"];
-	anim2.duration = 0.25;
-	anim2.removedOnCompletion = NO;
-	anim2.fillMode = kCAFillModeForwards;
-	anim2.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
 	
 	anim1.fromValue = @([self strokeValueFromAngle:_endAngle]);
-	anim2.fromValue = @([self strokeValueFromAngle:_startAngle]);
+	anim2.fromValue = @([self strokeValueFromAngle:_startAngle-20]);
 	if( _beat ){
-		_endAngle += 90;
+		_endAngle += 270;
 	} else {
-		_startAngle += 90;
+		_startAngle += 270;
 	}
 	anim1.toValue = @([self strokeValueFromAngle:_endAngle]);
-	anim2.toValue = @([self strokeValueFromAngle:_startAngle-10]);
+	anim2.toValue = @([self strokeValueFromAngle:_startAngle-20]);
 	
 	CAAnimationGroup* group = [[CAAnimationGroup alloc] init];
-	group.duration = 0.25;
+	group.duration = 0.33;
 	group.animations = @[anim1, anim2];
 	group.removedOnCompletion = NO;
 	group.fillMode = kCAFillModeForwards;
