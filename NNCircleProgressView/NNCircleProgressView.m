@@ -66,6 +66,10 @@
 
 -(void)start{
 	_progress = 0;
+	_startAngleWhenProgressStart = 0;
+	_startAngle = 0;
+	_endAngle = 0;
+	_beat = NO;
 	_timer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(hoge) userInfo:nil repeats:YES];
 	
 	CABasicAnimation* rotationAnimation;
