@@ -46,7 +46,11 @@
 	
 	
     _arc.fillColor = [UIColor clearColor].CGColor;
-    _arc.strokeColor = _color.CGColor;
+	if( _color ){
+		_arc.strokeColor = _color.CGColor;
+	} else {
+		_arc.strokeColor = [UIColor whiteColor].CGColor;
+	}
     _arc.lineWidth = _lineWidth;
 	_arc.strokeStart = 0;
 	_arc.strokeEnd = 0;

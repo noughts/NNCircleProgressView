@@ -10,11 +10,11 @@
 
 @interface NNCircleProgressView : UIView
 
+@property(nonatomic) UIColor* color;
 @property(nonatomic) CGFloat progress;
 
 -(void)start;
 -(void)stop;
 -(void)setProgress:(CGFloat)progress animated:(BOOL)animated;
--(void)setColor:(UIColor*)color;
 
 @end
