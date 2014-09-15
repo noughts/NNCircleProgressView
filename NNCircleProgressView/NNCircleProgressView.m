@@ -65,6 +65,7 @@
 }
 
 -(void)start{
+	[_arc removeAllAnimations];
 	_progress = 0;
 	_startAngleWhenProgressStart = 0;
 	_startAngle = 0;
@@ -72,7 +73,11 @@
 	_beat = NO;
 	_arc.strokeStart = 0;
 	_arc.strokeEnd = 0;
-	_timer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(hoge) userInfo:nil repeats:YES];
+	if( _timer ){
+		[_timer invalidate];
+	}
+	_timer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(onTimerTick) userInfo:nil repeats:YES];
+	[self onTimerTick];
 
 	
 	CABasicAnimation* rotationAnimation;
@@ -84,7 +89,7 @@
     [self.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
 }
 
--(void)hoge{
+-(void)onTimerTick{
 	if( _progress != 0 ){
 		[_timer invalidate];
 		return;
@@ -95,7 +100,7 @@
 	CABasicAnimation *anim1 = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
 	CABasicAnimation *anim2 = [CABasicAnimation animationWithKeyPath:@"strokeStart"];
 	
-	NSInteger posi = 10;
+	NSInteger posi = 30;
 	NSInteger nega = 180;
 	
 	anim1.fromValue = @([self strokeValueFromAngle:_endAngle]);
