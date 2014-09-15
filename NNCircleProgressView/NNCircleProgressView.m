@@ -70,9 +70,10 @@
 	_startAngle = 0;
 	_endAngle = 0;
 	_beat = NO;
-	_timer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(hoge) userInfo:nil repeats:YES];
 	_arc.strokeStart = 0;
 	_arc.strokeEnd = 0;
+	_timer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(hoge) userInfo:nil repeats:YES];
+
 	
 	CABasicAnimation* rotationAnimation;
     rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
@@ -127,10 +128,12 @@
 	if( _progress == 0 && progress != 0 ){
 		// はじめてプログレスが0を超えた時
 		_startAngleWhenProgressStart = _startAngle;
+		[_arc removeAllAnimations];
 	}
 	NSInteger fromAngle = _startAngleWhenProgressStart + 360*_progress;
 	NSInteger toAngle = _startAngleWhenProgressStart + 360*progress;
 	
+	_arc.strokeStart = [self strokeValueFromAngle:_startAngleWhenProgressStart];
 	_arc.strokeEnd = [self strokeValueFromAngle:toAngle];
 	_progress = progress;
 	return;
