@@ -12,6 +12,7 @@
 
 @implementation ViewController{
 	__weak IBOutlet NNCircleProgressView* _progressView;
+	__weak IBOutlet UISlider* slider;
 }
 
 - (void)viewDidLoad{
@@ -31,10 +32,15 @@
 }
 
 -(IBAction)onValueChange:(UISlider*)sender{
-//	[_progressView setProgress:sender.value];
-	[_progressView setProgress:sender.value animated:YES];
+	_progressView.progress = sender.value;
+//	[_progressView setProgress:sender.value animated:YES];
 }
 
+
+-(IBAction)onSetProgressButtonTap:(id)sender{
+	_progressView.progress = slider.value;
+//	[_progressView setProgress:slider.value animated:YES];
+}
 
 
 

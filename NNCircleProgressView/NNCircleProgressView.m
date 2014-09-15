@@ -12,6 +12,7 @@
 @implementation NNCircleProgressView{
 	CAShapeLayer* _arc;
 	CGFloat _progress;
+	CGFloat _prevProgress;
 	UIColor* _color;
 	CGFloat _intercept;// 円弧表示の切片
 	CGFloat _lineWidth;
@@ -20,6 +21,7 @@
 	NSInteger _endAngle;
 	NSInteger _startAngleWhenProgressStart;// プログレスが0から増えたタイミングのstartAngle
 	BOOL _beat;
+	NSInteger _pathMultiplier;
 }
 
 +(Class)layerClass{
@@ -29,6 +31,7 @@
 -(void)awakeFromNib{
 	[super awakeFromNib];
 	
+	_pathMultiplier = 10;
 	_arc = (CAShapeLayer*)self.layer;
 	
 	if( _lineWidth == 0 ){
@@ -39,7 +42,7 @@
 	int radius = self.frame.size.width / 2;
 	
 	CGFloat rad1 = 0 * M_PI / 180;
-	CGFloat rad2 = 360*999 * M_PI / 180;
+	CGFloat rad2 = 360*_pathMultiplier * M_PI / 180;
 	
 	CGPoint center = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
     _arc.path = [UIBezierPath bezierPathWithArcCenter:center radius:radius startAngle:rad1 endAngle:rad2 clockwise:YES].CGPath;
@@ -71,6 +74,7 @@
 -(void)start{
 	[_arc removeAllAnimations];
 	_progress = 0;
+	_prevProgress = 0;
 	_startAngleWhenProgressStart = 0;
 	_startAngle = 0;
 	_endAngle = 0;
@@ -91,6 +95,30 @@
     rotationAnimation.cumulative = YES;
     rotationAnimation.repeatCount = HUGE_VALF;
     [self.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
+	
+	CADisplayLink *link = [CADisplayLink displayLinkWithTarget:self selector:@selector(onEnterFrame)];
+    [link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+}
+
+
+-(void)onEnterFrame{
+	if( _progress == 0 ){
+		return;
+	}
+	if( _prevProgress == 0 && _progress != 0 ){
+		// はじめてプログレスが0を超えた時
+		_startAngleWhenProgressStart = _startAngle;
+		[_arc removeAnimationForKey:@"beat"];
+		_arc.strokeStart = [self strokeValueFromAngle:_startAngle];
+		_arc.strokeEnd = [self strokeValueFromAngle:_endAngle];
+	}
+	
+	NSInteger toAngle = _startAngleWhenProgressStart + 360*_progress;
+	double targetStrokeEnd = [self strokeValueFromAngle:toAngle];
+	double distance = targetStrokeEnd - (double)_arc.strokeEnd;
+	
+	_arc.strokeEnd += distance / 10;
+	_prevProgress = _progress;
 }
 
 -(void)onTimerTick{
@@ -127,12 +155,12 @@
 }
 
 
--(CGFloat)strokeValueFromAngle:(NSInteger)angle{
-	NSInteger maxAngle = 360 * 999;
-	return (CGFloat)angle / (CGFloat)maxAngle;
+-(double)strokeValueFromAngle:(NSInteger)angle{
+	NSInteger maxAngle = 360 * _pathMultiplier;
+	return (double)angle / (double)maxAngle;
 }
 
-
+/*
 -(void)setProgress:(CGFloat)progress animated:(BOOL)animated{
 	if( animated == NO ){
 		[self setProgress:progress];
@@ -168,6 +196,7 @@
 	_arc.strokeEnd = [self strokeValueFromAngle:toAngle];
 	_progress = progress;
 }
+ */
 
 
 
