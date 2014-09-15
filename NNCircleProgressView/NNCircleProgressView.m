@@ -18,6 +18,7 @@
 	NSTimer* _timer;
 	NSInteger _startAngle;
 	NSInteger _endAngle;
+	NSInteger _startAngleWhenProgressStart;// プログレスが0から増えたタイミングのstartAngle
 	BOOL _beat;
 }
 
@@ -64,6 +65,7 @@
 }
 
 -(void)start{
+	_progress = 0;
 	_timer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(hoge) userInfo:nil repeats:YES];
 	
 	CABasicAnimation* rotationAnimation;
@@ -76,17 +78,18 @@
 }
 
 -(void)hoge{
+	if( _progress != 0 ){
+		[_timer invalidate];
+		return;
+	}
+	
 	_beat = !_beat;
 	
 	CABasicAnimation *anim1 = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
 	CABasicAnimation *anim2 = [CABasicAnimation animationWithKeyPath:@"strokeStart"];
 	
-	CGFloat progress = 0.25;
 	NSInteger posi = 10;
-	NSInteger nega = posi+100;
-	if( nega+posi > 360 ){
-		nega = 360 - posi;
-	}
+	NSInteger nega = 180;
 	
 	anim1.fromValue = @([self strokeValueFromAngle:_endAngle]);
 	anim2.fromValue = @([self strokeValueFromAngle:_startAngle-posi]);
@@ -115,13 +118,17 @@
 
 
 -(void)setProgress:(CGFloat)progress{
+	if( _progress == 0 && progress != 0 ){
+		// はじめてプログレスが0を超えた時
+		_startAngleWhenProgressStart = _startAngle;
+	}
 	CABasicAnimation *drawAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
     drawAnimation.duration = 0.25;
-	// 進捗が0の時にも線が見えるようにする
-	CGFloat from = (1-_intercept) * _progress;
-	CGFloat to = (1-_intercept) * progress;
-    drawAnimation.fromValue = [NSNumber numberWithFloat:_intercept+from];
-    drawAnimation.toValue   = [NSNumber numberWithFloat:_intercept+to];
+	NSInteger fromAngle = _startAngleWhenProgressStart + 360*_progress;
+	NSInteger toAngle = _startAngleWhenProgressStart + 360*progress;
+	
+    drawAnimation.fromValue = @([self strokeValueFromAngle:fromAngle]);
+    drawAnimation.toValue   = @([self strokeValueFromAngle:toAngle]);
 	drawAnimation.removedOnCompletion = NO;
 	drawAnimation.fillMode = kCAFillModeForwards;
     drawAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
@@ -130,6 +137,7 @@
 }
 
 -(void)stop{
+	[_timer invalidate];
 	[self.layer removeAllAnimations];
 }
 
