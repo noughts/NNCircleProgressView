@@ -22,6 +22,7 @@
 	NSInteger _startAngleWhenProgressStart;// プログレスが0から増えたタイミングのstartAngle
 	BOOL _beat;
 	NSInteger _pathMultiplier;
+	CADisplayLink* _link;
 }
 
 +(Class)layerClass{
@@ -31,7 +32,7 @@
 -(void)awakeFromNib{
 	[super awakeFromNib];
 	
-	_pathMultiplier = 10;
+	_pathMultiplier = 200;
 	_arc = (CAShapeLayer*)self.layer;
 	
 	if( _lineWidth == 0 ){
@@ -96,8 +97,11 @@
     rotationAnimation.repeatCount = HUGE_VALF;
     [self.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
 	
-	CADisplayLink *link = [CADisplayLink displayLinkWithTarget:self selector:@selector(onEnterFrame)];
-    [link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+	if( _link ){
+		[_link invalidate];
+	}
+	_link = [CADisplayLink displayLinkWithTarget:self selector:@selector(onEnterFrame)];
+    [_link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 }
 
 
@@ -117,9 +121,13 @@
 	double targetStrokeEnd = [self strokeValueFromAngle:toAngle];
 	double distance = targetStrokeEnd - (double)_arc.strokeEnd;
 	
-	_arc.strokeEnd += distance / 10;
+	_arc.strokeEnd += distance / 4;
 	_prevProgress = _progress;
 }
+
+
+
+
 
 -(void)onTimerTick{
 	if( _progress != 0 ){
@@ -160,45 +168,6 @@
 	return (double)angle / (double)maxAngle;
 }
 
-/*
--(void)setProgress:(CGFloat)progress animated:(BOOL)animated{
-	if( animated == NO ){
-		[self setProgress:progress];
-		return;
-	}
-	if( _progress == 0 && progress != 0 ){
-		// はじめてプログレスが0を超えた時
-		_startAngleWhenProgressStart = _startAngle;
-	}
-	NSInteger fromAngle = _startAngleWhenProgressStart + 360*_progress;
-	NSInteger toAngle = _startAngleWhenProgressStart + 360*progress;
-	
-	CABasicAnimation *drawAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-    drawAnimation.duration = 0.25;
-    drawAnimation.fromValue = @([self strokeValueFromAngle:fromAngle]);
-    drawAnimation.toValue   = @([self strokeValueFromAngle:toAngle]);
-	drawAnimation.removedOnCompletion = NO;
-	drawAnimation.fillMode = kCAFillModeForwards;
-    drawAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    [_arc addAnimation:drawAnimation forKey:@"drawCircleAnimation"];
-	_progress = progress;
-}
-
-
--(void)setProgress:(CGFloat)progress{
-	if( _progress == 0 && progress != 0 ){
-		// はじめてプログレスが0を超えた時
-		_startAngleWhenProgressStart = _startAngle;
-		[_arc removeAnimationForKey:@"beat"];
-	}
-	NSInteger toAngle = _startAngleWhenProgressStart + 360*progress;
-	_arc.strokeStart = [self strokeValueFromAngle:_startAngleWhenProgressStart];
-	_arc.strokeEnd = [self strokeValueFromAngle:toAngle];
-	_progress = progress;
-}
- */
-
-
 
 
 
@@ -206,6 +175,7 @@
 -(void)stop{
 	[_timer invalidate];
 	[self.layer removeAllAnimations];
+	[_link invalidate];
 }
 
 

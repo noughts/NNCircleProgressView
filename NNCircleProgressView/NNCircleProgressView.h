@@ -15,6 +15,5 @@
 
 -(void)start;
 -(void)stop;
--(void)setProgress:(CGFloat)progress animated:(BOOL)animated;
 
 @end
