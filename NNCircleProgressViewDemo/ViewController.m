@@ -32,6 +32,7 @@
 
 -(IBAction)onValueChange:(UISlider*)sender{
 	[_progressView setProgress:sender.value];
+//	[_progressView setProgress:sender.value animated:YES];
 }
 
 

@@ -114,7 +114,7 @@
 	group.removedOnCompletion = NO;
 	group.fillMode = kCAFillModeForwards;
 	group.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-	[_arc addAnimation:group forKey:@"hge"];
+	[_arc addAnimation:group forKey:@"beat"];
 }
 
 
@@ -124,19 +124,17 @@
 }
 
 
--(void)setProgress:(CGFloat)progress{
+-(void)setProgress:(CGFloat)progress animated:(BOOL)animated{
+	if( animated == NO ){
+		[self setProgress:progress];
+		return;
+	}
 	if( _progress == 0 && progress != 0 ){
 		// はじめてプログレスが0を超えた時
 		_startAngleWhenProgressStart = _startAngle;
-		[_arc removeAllAnimations];
 	}
 	NSInteger fromAngle = _startAngleWhenProgressStart + 360*_progress;
 	NSInteger toAngle = _startAngleWhenProgressStart + 360*progress;
-	
-	_arc.strokeStart = [self strokeValueFromAngle:_startAngleWhenProgressStart];
-	_arc.strokeEnd = [self strokeValueFromAngle:toAngle];
-	_progress = progress;
-	return;
 	
 	CABasicAnimation *drawAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
     drawAnimation.duration = 0.25;
@@ -146,8 +144,26 @@
 	drawAnimation.fillMode = kCAFillModeForwards;
     drawAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     [_arc addAnimation:drawAnimation forKey:@"drawCircleAnimation"];
-	
+	_progress = progress;
 }
+
+
+-(void)setProgress:(CGFloat)progress{
+	if( _progress == 0 && progress != 0 ){
+		// はじめてプログレスが0を超えた時
+		_startAngleWhenProgressStart = _startAngle;
+		[_arc removeAnimationForKey:@"beat"];
+	}
+	NSInteger toAngle = _startAngleWhenProgressStart + 360*progress;
+	_arc.strokeStart = [self strokeValueFromAngle:_startAngleWhenProgressStart];
+	_arc.strokeEnd = [self strokeValueFromAngle:toAngle];
+	_progress = progress;
+}
+
+
+
+
+
 
 -(void)stop{
 	[_timer invalidate];
