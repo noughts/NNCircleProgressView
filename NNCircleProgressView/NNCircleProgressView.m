@@ -71,6 +71,8 @@
 	_endAngle = 0;
 	_beat = NO;
 	_timer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(hoge) userInfo:nil repeats:YES];
+	_arc.strokeStart = 0;
+	_arc.strokeEnd = 0;
 	
 	CABasicAnimation* rotationAnimation;
     rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
@@ -126,18 +128,22 @@
 		// はじめてプログレスが0を超えた時
 		_startAngleWhenProgressStart = _startAngle;
 	}
-	CABasicAnimation *drawAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-    drawAnimation.duration = 0.25;
 	NSInteger fromAngle = _startAngleWhenProgressStart + 360*_progress;
 	NSInteger toAngle = _startAngleWhenProgressStart + 360*progress;
 	
+	_arc.strokeEnd = [self strokeValueFromAngle:toAngle];
+	_progress = progress;
+	return;
+	
+	CABasicAnimation *drawAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+    drawAnimation.duration = 0.25;
     drawAnimation.fromValue = @([self strokeValueFromAngle:fromAngle]);
     drawAnimation.toValue   = @([self strokeValueFromAngle:toAngle]);
 	drawAnimation.removedOnCompletion = NO;
 	drawAnimation.fillMode = kCAFillModeForwards;
     drawAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     [_arc addAnimation:drawAnimation forKey:@"drawCircleAnimation"];
-	_progress = progress;
+	
 }
 
 -(void)stop{
