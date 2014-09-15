@@ -101,7 +101,7 @@
 		[_link invalidate];
 	}
 	_link = [CADisplayLink displayLinkWithTarget:self selector:@selector(onEnterFrame)];
-    [_link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    [_link addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
 }
 
 
