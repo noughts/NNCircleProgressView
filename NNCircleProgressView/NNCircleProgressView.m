@@ -23,6 +23,7 @@
 	BOOL _beat;
 	NSInteger _pathMultiplier;
 	CADisplayLink* _link;
+	float _rotation;
 }
 
 +(Class)layerClass{
@@ -87,25 +88,20 @@
 	}
 	_timer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(onTimerTick) userInfo:nil repeats:YES];
 	[self onTimerTick];
-
-	
-	CABasicAnimation* rotationAnimation;
-    rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
-    rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI];
-    rotationAnimation.duration = 0.5;
-    rotationAnimation.cumulative = YES;
-    rotationAnimation.repeatCount = HUGE_VALF;
-    [self.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
 	
 	if( _link ){
 		[_link invalidate];
 	}
 	_link = [CADisplayLink displayLinkWithTarget:self selector:@selector(onEnterFrame)];
-    [_link addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+    [_link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 }
 
 
 -(void)onEnterFrame{
+	CGAffineTransform transform = CGAffineTransformMakeRotation(_rotation);
+	self.transform = transform;
+	_rotation += 0.15;
+	
 	if( _progress == 0 ){
 		return;
 	}
